@@ -1,16 +1,33 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import logo from '../../../assets/logo.svg'
 import { Link } from 'react-router-dom';
 import { FaSearch, FaShoppingBag, } from "react-icons/fa";
+import { AuthContext } from '../../../Provider/AuthProvider';
 
 const Navbar = () => {
+    const {user, logOut} = useContext(AuthContext);
+
+    const handleLogOut = () =>{
+        logOut()
+        .then(()=>{})
+        .catch(error =>{
+            console.log(error.message);
+        })
+    }
 
     const navLink = <>
         <li><Link to='/'>Home</Link></li>
         <li><Link to='/about'>About</Link></li>
-        <li><Link to='/services'>Services</Link></li>
-        <li><Link to='/blog'>Blog</Link></li>
-        <li><Link to='/contact'>Contact</Link></li>
+        {user?.email ?
+         <>
+
+        <li><Link to='/bookings'>My Bookings</Link></li>
+        <li><button onClick={handleLogOut}>Log Out</button></li>
+        </> :
+            <li><Link to='/login'>Login</Link></li> 
+            
+        }
+        {/* <li><Link to='/contact'>Contact</Link></li> */}
     </>
     return (
         <div>
