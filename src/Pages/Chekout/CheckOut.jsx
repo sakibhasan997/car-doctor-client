@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { useLoaderData } from 'react-router-dom';
+import { useLoaderData, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../Provider/AuthProvider';
 import Swal from 'sweetalert2';
 
@@ -7,6 +7,7 @@ const CheckOut = () => {
     const service = useLoaderData();
     const { title, _id, price, email, img } = service;
     const {user} = useContext(AuthContext);
+    const navigate = useNavigate();
 
     const handleBookService = e =>{
         e.preventDefault();
@@ -25,7 +26,7 @@ const CheckOut = () => {
         }
         console.log(booking);
 
-        fetch('http://localhost:5000/bookings', {
+        fetch('https://car-doctor-server-eta-ashy.vercel.app/bookings', {
             method: 'POST',
             headers: {
                 'content-type': 'application/json'
@@ -42,6 +43,7 @@ const CheckOut = () => {
                     icon: 'success',
                     confirmButtonText: 'Cool'
                   })
+                  navigate('/bookings')
             }
         })
 
@@ -78,7 +80,7 @@ const CheckOut = () => {
                     </div>
                 </div>
                 <div className="form-control mt-6">
-                    <input className='btn bg-red-600 border-none text-white btn-block' type="submit" value="Order Confirm" />
+                    <input  className='btn bg-red-600 border-none text-white btn-block' type="submit" value="Order Confirm" />
                 </div>
             </form>
             <div className="card-body">

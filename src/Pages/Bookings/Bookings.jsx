@@ -2,18 +2,36 @@ import React, { useContext, useEffect, useState } from 'react';
 import { AuthContext } from '../../Provider/AuthProvider';
 import BookingsRow from './BookingsRow';
 import Swal from 'sweetalert2';
+import { useLocation, useNavigate } from 'react-router-dom';
+import useScroll from '../../Hooks/useScroll';
 
 const Bookings = () => {
 
+    const {pathname} = useLocation();
+    useScroll(pathname);
+
     const { user } = useContext(AuthContext);
     const [bookings, setBookings] = useState([]);
+    const navigate = useNavigate();
 
-    const url = `http://localhost:5000/bookings?email=${user?.email}`
+    const url = `https://car-doctor-server-eta-ashy.vercel.app/bookings?email=${user?.email}`
     useEffect(() => {
-        fetch(url)
+        fetch(url,{
+            method: 'GET',
+            headers: {
+                authorization: `Bearer ${localStorage.getItem('car-access-token')}`
+            }
+        })
             .then(res => res.json())
-            .then(data => setBookings(data))
-    }, [url]);
+            .then(data => {
+                if(!data.error){
+                    setBookings(data)
+                }else{
+                    // logout and then navigate
+                    navigate('/')
+                }
+            })
+    }, [url,navigate]);
 
     const handleDelete = (id) => {
         const proceed = Swal.fire({
@@ -28,7 +46,7 @@ const Bookings = () => {
             if (result.isConfirmed) {
 
                 if (proceed) {
-                    fetch(`http://localhost:5000/bookings/${id}`, {
+                    fetch(`https://car-doctor-server-eta-ashy.vercel.app/bookings/${id}`, {
                         method: 'DELETE',
                     })
                         .then(res => res.json())
@@ -50,7 +68,7 @@ const Bookings = () => {
     }
 
     const handleBookingConfirm =(id)=>{
-        fetch(`http://localhost:5000/bookings/${id}`,{
+        fetch(`https://car-doctor-server-eta-ashy.vercel.app/bookings/${id}`,{
             method: 'PATCH',
             headers: {
                 'content-type':'application/json'

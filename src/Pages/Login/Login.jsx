@@ -1,32 +1,38 @@
 import React, { useContext } from 'react';
 import img from '../../assets/images/login/login.svg'
-import { Link } from 'react-router-dom';
+import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../Provider/AuthProvider';
+import SocialLogin from '../Shared/SocialLogin/SocialLogin';
 
 const Login = () => {
 
-    const {signIn} = useContext(AuthContext);
+    const { signIn } = useContext(AuthContext);
+    const navigate = useNavigate();
+    const location = useLocation();
+    const from = location.state?.from?.pathname || '/';
 
-    const handleLogin = e =>{
+    const handleLogin = e => {
         e.preventDefault();
         const form = e.target;
         const email = form.email.value;
         const password = form.password.value;
-    
-        const newUser = {email, password}
-        console.log(newUser);
+
+        // const newUser = {email, password}
+        // console.log(newUser);
 
         signIn(email, password)
-        .then((userCredential) => {
-            // Signed in 
-            const user = userCredential.user;
-            console.log(user);
-            // ...
-          })
-          .catch((error) => {
-            const errorMessage = error.message;
-            console.log(errorMessage);
-          });
+            .then((userCredential) => {
+                // Signed in 
+                const user = userCredential.user;
+                console.log(user);
+                console.log(loggedUser);
+                navigate(from, { replace: true });
+
+            })
+            .catch((error) => {
+                const errorMessage = error.message;
+                console.log(errorMessage);
+            });
 
     }
 
@@ -62,6 +68,9 @@ const Login = () => {
                                 </div>
                             </div>
                         </form>
+                        <div className='text-center'>
+                            <SocialLogin />
+                        </div>
                         <p className='text-center py-5'>New to Car Doctors <Link to='/signup' className='text-red-600 font-bold '>Sign Up</Link></p>
                     </div>
                 </div>
